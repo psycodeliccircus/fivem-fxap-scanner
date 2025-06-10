@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: write  # permite criar tags e releases
 
 jobs:
   create-release:
@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Extrair versão.
+      - name: Extrair versão
         run: echo "version=$(jq -r .version package.json)" >> $GITHUB_ENV
 
       - name: Configurar Git
@@ -27,7 +27,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Criar e enviar tag
+      - name: Criar e push da tag
         run: |
           git tag "${{ env.version }}"
           git push origin "${{ env.version }}"
@@ -35,13 +35,12 @@ jobs:
       - name: Criar GitHub Release
         id: create_release
         uses: actions/create-release@v1
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          tag_name:     ${{ env.version }}
+          repo_token: ${{ secrets.GH_TOKEN }}
+          tag_name:   ${{ env.version }}
           release_name: "FiveM FXAP Scanner v${{ env.version }}"
-          draft:        false
-          prerelease:   ${{ contains(env.version, 'alpha') || contains(env.version, 'beta') }}
+          draft:      false
+          prerelease: ${{ contains(env.version, 'alpha') || contains(env.version, 'beta') }}
 
   build-and-upload:
     needs: create-release
@@ -57,29 +56,29 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
+          node-version: 20
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build App
+      - name: Build App (gera pasta release/)
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npm run dist
 
       - name: Upload release assets
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           RAW_UPLOAD_URL: ${{ needs.create-release.outputs.upload_url }}
         run: |
-          # Strip the "{?name,label}" suffix
+          # Remove o sufixo "{?name,label}" do upload_url
           UPLOAD_URL="${RAW_UPLOAD_URL%\{*}"
-          echo "Uploading assets to $UPLOAD_URL"
+          echo "Enviando assets para $UPLOAD_URL"
           for file in release/*; do
             name=$(basename "$file")
             echo "→ $name"
             curl --fail -X POST \
-              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
               -H "Content-Type: application/octet-stream" \
               --data-binary @"$file" \
               "$UPLOAD_URL?name=$name"

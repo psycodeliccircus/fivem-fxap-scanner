@@ -38,7 +38,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          # sem token/repo_token aqui — a action usa GITHUB_TOKEN por padrão
           tag_name:     ${{ env.version }}
           release_name: "FiveM FXAP Scanner v${{ env.version }}"
           draft:        false
@@ -58,30 +57,26 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
+          node-version: 20
 
       - name: Install dependencies
         run: npm install
 
       - name: Build App (gera pasta release/)
+        run: npm run dist
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: npm run dist
+
+      - name: List artifacts
+        run: ls -lh release/
 
       - name: Upload release assets
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          RAW_UPLOAD_URL: ${{ needs.create-release.outputs.upload_url }}
-        run: |
-          # Remove o sufixo "{?name,label}" do upload_url
-          UPLOAD_URL="${RAW_UPLOAD_URL%\{*}"
-          echo "Enviando assets para $UPLOAD_URL"
-          for file in release/*; do
-            name=$(basename "$file")
-            echo "→ $name"
-            curl --fail -X POST \
-              -H "Authorization: Bearer $GITHUB_TOKEN" \
-              -H "Content-Type: application/octet-stream" \
-              --data-binary @"$file" \
-              "$UPLOAD_URL?name=$name"
-          done
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: release
+          asset_name: |
+            **/*
+          asset_content_type: application/octet-stream

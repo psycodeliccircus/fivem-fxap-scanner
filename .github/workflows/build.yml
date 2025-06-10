@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Extrair versão
+      - name: Extrair versão.
         run: echo "version=$(jq -r .version package.json)" >> $GITHUB_ENV
 
       - name: Configurar Git

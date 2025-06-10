@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: write  # permite criar tags e releases
+  contents: write
 
 jobs:
   create-release:
@@ -27,7 +27,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Criar e push da tag
+      - name: Criar e enviar tag
         run: |
           git tag "${{ env.version }}"
           git push origin "${{ env.version }}"
@@ -35,12 +35,14 @@ jobs:
       - name: Criar GitHub Release
         id: create_release
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          repo_token: ${{ secrets.GH_TOKEN }}
-          tag_name:   ${{ env.version }}
+          # sem token/repo_token aqui — a action usa GITHUB_TOKEN por padrão
+          tag_name:     ${{ env.version }}
           release_name: "FiveM FXAP Scanner v${{ env.version }}"
-          draft:      false
-          prerelease: ${{ contains(env.version, 'alpha') || contains(env.version, 'beta') }}
+          draft:        false
+          prerelease:   ${{ contains(env.version, 'alpha') || contains(env.version, 'beta') }}
 
   build-and-upload:
     needs: create-release
@@ -56,7 +58,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '20.x'
 
       - name: Install dependencies
         run: npm install

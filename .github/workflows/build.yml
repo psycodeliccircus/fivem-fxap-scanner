@@ -1,12 +1,12 @@
 name: FiveM FXAP Scanner Build
 
-permissions:
-  contents: write
-
 on:
   push:
     branches:
       - main
+
+permissions:
+  contents: write
 
 jobs:
   create-release:
@@ -19,24 +19,24 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Extract version
+      - name: Extrair versão
         run: echo "version=$(jq -r .version package.json)" >> $GITHUB_ENV
 
-      - name: Configure Git
+      - name: Configurar Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Create and push tag
+      - name: Criar e enviar tag
         run: |
           git tag "${{ env.version }}"
           git push origin "${{ env.version }}"
 
-      - name: Create GitHub Release
+      - name: Criar GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           tag_name: ${{ env.version }}
           release_name: "FiveM FXAP Scanner v${{ env.version }}"
@@ -59,10 +59,10 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
-      - name: Build app
+      - name: Build App
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npm run dist
@@ -70,12 +70,19 @@ jobs:
       - name: Upload Release Assets
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          UPLOAD_URL: ${{ needs.create-release.outputs.upload_url }}
+          RAW_UPLOAD_URL: ${{ needs.create-release.outputs.upload_url }}
         run: |
-          for file in release/*; do
-            curl --fail -X POST \
+          # remove o template "{?name,label}"
+          UPLOAD_URL="${RAW_UPLOAD_URL%\{*}"
+          echo "Uploading to $UPLOAD_URL"
+
+          for f in release/*; do
+            fname=$(basename "$f")
+            echo " → $fname"
+            curl --fail \
+              -X POST \
               -H "Authorization: token $GH_TOKEN" \
               -H "Content-Type: application/octet-stream" \
-              --data-binary @"$file" \
-              "$UPLOAD_URL?name=$(basename "$file")"
+              --data-binary @"$f" \
+              "${UPLOAD_URL}?name=${fname}"
           done

@@ -1,12 +1,14 @@
 name: FiveM FXAP Scanner Build
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
       - main
 
 jobs:
-  # Cria a tag e o próprio Release no GitHub
   create-release:
     runs-on: ubuntu-latest
     outputs:
@@ -41,7 +43,6 @@ jobs:
           draft: false
           prerelease: ${{ contains(env.version, 'alpha') || contains(env.version, 'beta') }}
 
-  # Build e upload de assets (portable, nsis, dmg, AppImage, etc.)
   build-and-upload:
     needs: create-release
     runs-on: ${{ matrix.os }}
@@ -61,7 +62,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build app (`npm run dist`)
+      - name: Build app
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npm run dist
@@ -71,15 +72,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           UPLOAD_URL: ${{ needs.create-release.outputs.upload_url }}
         run: |
-          echo "Uploading assets to $UPLOAD_URL"
           for file in release/*; do
-            filename=$(basename "$file")
-            echo "→ $filename"
-            curl \
-              --fail \
-              -X POST \
-              -H "Authorization: token $GITHUB_TOKEN" \
+            curl --fail -X POST \
+              -H "Authorization: token $GH_TOKEN" \
               -H "Content-Type: application/octet-stream" \
               --data-binary @"$file" \
-              "$UPLOAD_URL?name=$filename"
+              "$UPLOAD_URL?name=$(basename "$file")"
           done

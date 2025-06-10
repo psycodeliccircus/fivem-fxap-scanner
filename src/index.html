@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>FiveM FXAP Scanner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="title">
+        <img id="logoIcon" src="assets/icon.png" alt="Logo" class="logo-icon"/>
+        <h1>FiveM FXAP Scanner</h1>
+        <a href="https://discord.com/users/767106577022320680"
+           target="_blank" class="discord-btn">
+          <img id="discordIcon" src="assets/discord-white-icon.png"
+               alt="Discord" class="discord-icon"/> RenildoMarcio
+        </a>
+      </div>
+      <div class="window-controls">
+        <button id="min-btn" class="control-btn" title="Minimizar">
+          <svg viewBox="0 0 10 1"><rect width="10" height="1"/></svg>
+        </button>
+        <button id="max-btn" class="control-btn" title="Maximizar">
+          <svg viewBox="0 0 10 10"><rect x="1" y="1" width="8" height="8" stroke-width="1" fill="none"/></svg>
+        </button>
+        <button id="close-btn" class="control-btn close" title="Fechar">
+          <svg viewBox="0 0 10 10"><path d="M1,1 L9,9 M9,1 L1,9" stroke-width="1"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="body">
+      <div class="controls">
+        <button id="btnSelectFolder">Selecionar Pasta</button>
+        <button id="btnSelectFile">Selecionar Arquivo</button>
+        <span id="pathDisplay">Nenhum recurso selecionado.</span>
+        <button id="btnCheck" disabled>Iniciar Verificação</button>
+        <button id="btnDeleteAll" class="btn-delete-all" style="display:none;">
+          Excluir Todos
+        </button>
+      </div>
+
+      <div id="progressContainer" class="progress-container" style="display:none;">
+        <progress id="progressBar" max="100" value="0"></progress>
+        <span id="progressText">0/0</span>
+      </div>
+
+      <div class="lists">
+        <div class="list">
+          <header>Resources Sem Tebex</header>
+          <div class="content"><ul id="ulNo"></ul></div>
+        </div>
+        <div class="list">
+          <header>
+            Resources Com Tebex
+            <button id="btnDeleteAll" class="btn-delete-all" style="display:none;">
+              Excluir Todos
+            </button>
+          </header>
+          <div class="content"><ul id="ulYes"></ul></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer" id="statusFooter"></div>
+    <div class="footer-bar">
+      <div class="footer-left">
+        Copyright © 2025 FiveM FXAP Scanner<br>
+        Feito com <span class="heart">❤️</span> por: RenildoMarcio
+      </div>
+      <div class="footer-right" id="footerVersion"></div>
+    </div>
+  </div>
+  <script type="module" src="renderer.js"></script>
+</body>
+</html>

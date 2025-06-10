@@ -1,0 +1,97 @@
+{
+  "name": "fivem-fxap-scanner",
+  "version": "1.0.0",
+  "productName": "FiveM FXAP Scanner",
+  "description": "Desktop app para escanear .fxap em pastas e zips no FiveM",
+  "author": "Renildo Marcio <renildomrc@gmail.com>",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"npm run dev:renderer\" \"npm run dev:electron\"",
+    "dev:renderer": "vite",
+    "dev:electron": "wait-on tcp:3000 && electron .",
+    "build:icons": "node build.js --icon=https://chevereto.renildomarcio.com.br/images/2025/05/27/e508dc4237f9fb6b48d3480efdf87db8.png",
+    "build:renderer": "vite build",
+    "build:package": "electron-builder",
+    "build": "npm run build:icons && npm run build:renderer",
+    "dist": "npm run build && npm run build:package",
+    "start": "electron ."
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.9",
+    "electron-updater": "^6.6.2",
+    "node-fetch": "^2.6.7",
+    "png2icons": "^2.0.1",
+    "jimp": "^0.22.8"
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0",
+    "electron": "^29.0.0",
+    "electron-builder": "^26.0.12",
+    "vite": "^4.0.0",
+    "wait-on": "^7.0.0"
+  },
+  "build": {
+    "appId": "com.renildomarcio.fivemfxapscanner",
+    "productName": "fivem-fxap-scanner",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "psycodeliccircus",
+        "repo": "fivem-fxap-scanner"
+      }
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      { "from": "build/icon.png",   "to": "assets/icon.png" },
+      { "from": "build/icon.ico",   "to": "assets/icon.ico" },
+      { "from": "build/icon.icns",  "to": "assets/icon.icns" }
+    ],
+    "compression": "maximum",
+    "asar": true,
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        { "target": "portable", "arch": ["x64","ia32"] },
+        { "target": "nsis",     "arch": ["x64","ia32"] }
+      ]
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.exe",
+      "requestExecutionLevel": "user"
+    },
+    "nsis": {
+      "artifactName": "${productName}-${version}-win.exe",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "runAfterFinish": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FiveM FXAP Scanner"
+    },
+    "mac": {
+      "icon": "build/icon.icns",
+      "target": [{ "target": "dmg", "arch": ["x64","arm64"] }],
+      "category": "public.app-category.developer-tools"
+    },
+    "dmg": {
+      "artifactName": "${productName}-${version}-mac.dmg",
+      "title": "${productName} Installer"
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "target": [
+        { "target": "AppImage", "arch": ["x64","arm64"] },
+        { "target": "tar.gz",   "arch": ["x64","arm64"] }
+      ],
+      "category": "Utility"
+    }
+  }
+}

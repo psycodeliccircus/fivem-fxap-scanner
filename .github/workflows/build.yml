@@ -38,10 +38,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          tag_name: ${{ env.version }}
+          tag_name:     ${{ env.version }}
           release_name: "FiveM FXAP Scanner v${{ env.version }}"
-          draft: false
-          prerelease: ${{ contains(env.version, 'alpha') || contains(env.version, 'beta') }}
+          draft:        false
+          prerelease:   ${{ contains(env.version, 'alpha') || contains(env.version, 'beta') }}
 
   build-and-upload:
     needs: create-release
@@ -57,9 +57,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '20.x'
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install
 
       - name: Build App
@@ -67,22 +67,20 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npm run dist
 
-      - name: Upload Release Assets
+      - name: Upload release assets
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           RAW_UPLOAD_URL: ${{ needs.create-release.outputs.upload_url }}
         run: |
-          # remove o template "{?name,label}"
+          # Strip the "{?name,label}" suffix
           UPLOAD_URL="${RAW_UPLOAD_URL%\{*}"
-          echo "Uploading to $UPLOAD_URL"
-
-          for f in release/*; do
-            fname=$(basename "$f")
-            echo " → $fname"
-            curl --fail \
-              -X POST \
-              -H "Authorization: token $GH_TOKEN" \
+          echo "Uploading assets to $UPLOAD_URL"
+          for file in release/*; do
+            name=$(basename "$file")
+            echo "→ $name"
+            curl --fail -X POST \
+              -H "Authorization: Bearer $GH_TOKEN" \
               -H "Content-Type: application/octet-stream" \
-              --data-binary @"$f" \
-              "${UPLOAD_URL}?name=${fname}"
+              --data-binary @"$file" \
+              "$UPLOAD_URL?name=$name"
           done

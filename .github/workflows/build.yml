@@ -12,8 +12,8 @@ jobs:
   create-release:
     runs-on: ubuntu-latest
     outputs:
-      version:    ${{ steps.extract_version.outputs.version }}
       upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version:    ${{ steps.extract_version.outputs.version }}
     steps:
       - name: Checkout completo
         uses: actions/checkout@v2
@@ -72,8 +72,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: List release artifacts
-        run: ls -lh release/
+      - name: List release artifacts (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          echo "=== Artifacts in release/ ==="
+          ls -lh release
+        shell: bash
+
+      - name: List release artifacts (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          Write-Host "=== Artifacts in release\ ==="
+          Get-ChildItem release
+        shell: pwsh
 
       - name: Upload all release assets
         uses: softprops/action-gh-release@v1

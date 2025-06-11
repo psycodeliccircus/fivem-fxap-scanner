@@ -79,6 +79,11 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ needs.create-release.outputs.version }}
-          files:    release/**/*
+          files: |
+            release/*.exe
+            release/*.dmg
+            release/*.AppImage
+            release/*.tar.gz
+            release/*.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

@@ -1,6 +1,6 @@
 {
   "name": "fivem-fxap-scanner",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "productName": "FiveM FXAP Scanner",
   "description": "Desktop app para escanear .fxap em pastas e zips no FiveM",
   "author": "Renildo Marcio <renildomrc@gmail.com>",
@@ -9,7 +9,7 @@
     "dev": "concurrently -k \"npm run dev:renderer\" \"npm run dev:electron\"",
     "dev:renderer": "vite",
     "dev:electron": "wait-on tcp:3000 && electron .",
-    "build:icons": "node build.js --icon=https://chevereto.renildomarcio.com.br/images/2025/05/27/e508dc4237f9fb6b48d3480efdf87db8.png",
+    "build:icons": "node build.js --icon=https://chevereto.renildomarcio.com.br/images/2025/06/11/f101fb338df318f8287f3df12ad09e13.png",
     "build:renderer": "vite build",
     "build:package": "electron-builder",
     "build": "npm run build:icons && npm run build:renderer",
@@ -19,6 +19,7 @@
   "dependencies": {
     "adm-zip": "^0.5.9",
     "axios": "^1.9.0",
+    "electron-log": "^5.4.1",
     "electron-updater": "^6.6.2",
     "jimp": "^0.22.8",
     "node-fetch": "^2.6.7",

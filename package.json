@@ -1,6 +1,6 @@
 {
   "name": "fivem-fxap-scanner",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "productName": "FiveM FXAP Scanner",
   "description": "Desktop app para escanear .fxap em pastas e zips no FiveM",
   "author": "Renildo Marcio <renildomrc@gmail.com>",
@@ -18,10 +18,11 @@
   },
   "dependencies": {
     "adm-zip": "^0.5.9",
+    "axios": "^1.9.0",
     "electron-updater": "^6.6.2",
+    "jimp": "^0.22.8",
     "node-fetch": "^2.6.7",
-    "png2icons": "^2.0.1",
-    "jimp": "^0.22.8"
+    "png2icons": "^2.0.1"
   },
   "devDependencies": {
     "concurrently": "^7.0.0",
@@ -33,6 +34,7 @@
   "build": {
     "appId": "com.renildomarcio.fivemfxapscanner",
     "productName": "fivem-fxap-scanner",
+    "copyright": "Copyright © 2025 FiveM FXAP Scanner - Dev by RenildoMarcio",
     "publish": [
       {
         "provider": "github",
@@ -50,17 +52,38 @@
       "package.json"
     ],
     "extraResources": [
-      { "from": "build/icon.png",   "to": "assets/icon.png" },
-      { "from": "build/icon.ico",   "to": "assets/icon.ico" },
-      { "from": "build/icon.icns",  "to": "assets/icon.icns" }
+      {
+        "from": "build/icon.png",
+        "to": "assets/icon.png"
+      },
+      {
+        "from": "build/icon.ico",
+        "to": "assets/icon.ico"
+      },
+      {
+        "from": "build/icon.icns",
+        "to": "assets/icon.icns"
+      }
     ],
     "compression": "maximum",
     "asar": true,
     "win": {
       "icon": "build/icon.ico",
       "target": [
-        { "target": "portable", "arch": ["x64","ia32"] },
-        { "target": "nsis",     "arch": ["x64","ia32"] }
+        {
+          "target": "portable",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
       ]
     },
     "portable": {
@@ -78,7 +101,15 @@
     },
     "mac": {
       "icon": "build/icon.icns",
-      "target": [{ "target": "dmg", "arch": ["x64","arm64"] }],
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
       "category": "public.app-category.developer-tools"
     },
     "dmg": {
@@ -88,8 +119,20 @@
     "linux": {
       "icon": "build/icon.png",
       "target": [
-        { "target": "AppImage", "arch": ["x64","arm64"] },
-        { "target": "tar.gz",   "arch": ["x64","arm64"] }
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
       ],
       "category": "Utility"
     }

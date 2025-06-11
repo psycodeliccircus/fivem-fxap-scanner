@@ -95,6 +95,10 @@ jobs:
             release/*.dmg
             release/*.AppImage
             release/*.tar.gz
-            release/*.yml
+            release/latest.yml
+            release/latest-linux.yml
+            release/latest-mac.yml
+            release/latest-linux-arm64.yml
+            release/*.blockmap
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

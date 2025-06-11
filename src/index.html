@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -35,13 +34,17 @@
       <div class="controls">
         <button id="btnSelectFolder">Selecionar Pasta</button>
         <button id="btnSelectFile">Selecionar Arquivo</button>
-        <!-- Novo botão de update -->
+
+        <!-- Auto-update instalado -->
         <button id="btnUpdate" class="update">Verificar Update</button>
+        
+        <!-- Atualização portátil -->
+        <button id="btnPortableDownload" class="update" style="display:none;">Baixar Portable</button>
+        <button id="btnPortableRestart" class="update" style="display:none;">Reiniciar Portable</button>
+
         <span id="pathDisplay">Nenhum recurso selecionado.</span>
         <button id="btnCheck" disabled>Iniciar Verificação</button>
-        <button id="btnDeleteAll" class="btn-delete-all" style="display:none;">
-          Excluir Todos
-        </button>
+        <button id="btnDeleteAllControls" class="btn-delete-all" style="display:none;">Excluir Todos</button>
       </div>
 
       <div id="progressContainer" class="progress-container" style="display:none;">
@@ -57,9 +60,7 @@
         <div class="list">
           <header>
             Resources Com Tebex
-            <button id="btnDeleteAll" class="btn-delete-all" style="display:none;">
-              Excluir Todos
-            </button>
+            <button id="btnDeleteAllResources" class="btn-delete-all" style="display:none;">Excluir Todos</button>
           </header>
           <div class="content"><ul id="ulYes"></ul></div>
         </div>

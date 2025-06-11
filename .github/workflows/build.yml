@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version:    ${{ steps.extract_version.outputs.version }}
     steps:
       - name: Checkout completo
         uses: actions/checkout@v2
@@ -20,17 +21,21 @@ jobs:
           fetch-depth: 0
 
       - name: Extrair versão
-        run: echo "version=$(jq -r .version package.json)" >> $GITHUB_ENV
+        id: extract_version
+        run: |
+          version=$(jq -r .version package.json)
+          echo "version=$version" >> $GITHUB_ENV
+          echo "::set-output name=version::$version"
 
       - name: Configurar Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Criar e enviar tag
+      - name: Criar e push da tag
         run: |
-          git tag "${{ env.version }}"
-          git push origin "${{ env.version }}"
+          git tag "${{ steps.extract_version.outputs.version }}"
+          git push origin "${{ steps.extract_version.outputs.version }}"
 
       - name: Criar GitHub Release
         id: create_release
@@ -38,10 +43,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          tag_name:     ${{ env.version }}
-          release_name: "FiveM FXAP Scanner v${{ env.version }}"
+          tag_name:     ${{ steps.extract_version.outputs.version }}
+          release_name: "FiveM FXAP Scanner v${{ steps.extract_version.outputs.version }}"
           draft:        false
-          prerelease:   ${{ contains(env.version, 'alpha') || contains(env.version, 'beta') }}
+          prerelease:   ${{ contains(steps.extract_version.outputs.version, 'alpha') || contains(steps.extract_version.outputs.version, 'beta') }}
 
   build-and-upload:
     needs: create-release
@@ -57,26 +62,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build App (gera pasta release/)
+      - name: Build App (gera `release/`)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npm run dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: List artifacts
-        run: ls -lh release/
+      - name: List release artifacts
+        run: ls -Rlh release/
 
-      - name: Upload release assets
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Upload all release assets
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: release
-          asset_name: |
-            **/*
-          asset_content_type: application/octet-stream
+          files: release/**/* 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

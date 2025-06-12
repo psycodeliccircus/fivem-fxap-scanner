@@ -33,4 +33,6 @@ contextBridge.exposeInMainWorld('api', {
   onPortableUpdateAvailable: fn          => ipcRenderer.on('portable-update-available', (_, data) => fn(data)),
   onPortableDownloadProgress: fn         => ipcRenderer.on('portable-download-progress', (_, data) => fn(data)),
   onPortableDownloadComplete: fn         => ipcRenderer.on('portable-download-complete', (_, data) => fn(data)),
+
+  getSystemInfo: () => ipcRenderer.invoke('sysinfo:getAll'),
 });

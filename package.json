@@ -1,6 +1,6 @@
 {
   "name": "fivem-fxap-scanner",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "productName": "FiveM FXAP Scanner",
   "description": "Desktop app para escanear .fxap em pastas e zips no FiveM",
   "author": "Renildo Marcio <renildomrc@gmail.com>",
@@ -23,7 +23,8 @@
     "electron-updater": "^6.6.2",
     "jimp": "^0.22.8",
     "node-fetch": "^2.6.7",
-    "png2icons": "^2.0.1"
+    "png2icons": "^2.0.1",
+    "systeminformation": "^5.27.1"
   },
   "devDependencies": {
     "concurrently": "^7.0.0",

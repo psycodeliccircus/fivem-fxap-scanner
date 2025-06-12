@@ -1,5 +1,6 @@
+// vite.config.js
 import { defineConfig } from 'vite';
-import { join } from 'path';
+import { join, resolve } from 'path';
 
 export default defineConfig({
   root: 'src',
@@ -9,7 +10,9 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: join(__dirname, 'src/index.html')
+        index:         resolve(__dirname, 'src/index.html'),
+        sobre:         resolve(__dirname, 'src/sobre.html'),
+        meupc:         resolve(__dirname, 'src/meupc.html'),
       }
     }
   },

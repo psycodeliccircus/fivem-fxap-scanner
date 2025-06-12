@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Meu PC • FiveM FXAP Scanner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="title">
+        <img id="logoIcon" src="assets/icon.png" alt="Logo" class="logo-icon"/>
+        <h1>FiveM FXAP Scanner</h1>
+        <a href="https://discord.com/users/767106577022320680"
+           target="_blank" class="discord-btn">
+          <img id="discordIcon" src="assets/discord-white-icon.png"
+               alt="Discord" class="discord-icon"/> RenildoMarcio
+        </a>
+      </div>
+      <div class="window-controls">
+        <button id="min-btn" class="control-btn" title="Minimizar">
+          <svg viewBox="0 0 10 1"><rect width="10" height="1"/></svg>
+        </button>
+        <button id="max-btn" class="control-btn" title="Maximizar">
+          <svg viewBox="0 0 10 10"><rect x="1" y="1" width="8" height="8" stroke-width="1" fill="none"/></svg>
+        </button>
+        <button id="close-btn" class="control-btn close" title="Fechar">
+          <svg viewBox="0 0 10 10"><path d="M1,1 L9,9 M9,1 L1,9" stroke-width="1"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <ul class="nav-links">
+        <li><a href="index.html"       id="nav-home">Home</a></li>
+        <li><a href="sobre.html"       id="nav-about">Sobre</a></li>
+        <li><a href="meupc.html"       id="nav-meupc" class="active">Meu PC</a></li>
+      </ul>
+    </nav>
+
+    <!-- BODY -->
+    <div class="body">
+      <section id="sysinfoSection" class="card sysinfo-section">
+        <h2>Informações do Meu PC</h2>
+        <p>Carregando dados do sistema…</p>
+      </section>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-bar">
+      <div class="footer-left">
+        Copyright © 2025 FiveM FXAP Scanner<br>
+        Feito com <span class="heart">❤️</span> por: RenildoMarcio
+      </div>
+      <div class="footer-right" id="footerVersion"></div>
+    </div>
+  </div>
+
+  <script type="module" src="renderer.js"></script>
+
+  <!-- SCRIPT PARA CARREGAR O systeminformation -->
+  <script type="module">
+    window.addEventListener('DOMContentLoaded', async () => {
+      const sec = document.getElementById('sysinfoSection');
+      try {
+        const info = await window.api.getSystemInfo();
+        sec.innerHTML = `
+          <h2>Informações do Meu PC</h2>
+          <ul class="sysinfo-list">
+            <li><strong>SO:</strong> ${info.osInfo.distro} ${info.osInfo.release} (${info.osInfo.arch})</li>
+            <li><strong>CPU:</strong> ${info.cpu.manufacturer} ${info.cpu.brand} — ${info.cpu.cores} cores</li>
+            <li><strong>Memória Total:</strong> ${(info.mem.total / 1024 / 1024 / 1024).toFixed(2)} GB</li>
+            <li><strong>Memória Livre:</strong> ${(info.mem.free / 1024 / 1024 / 1024).toFixed(2)} GB</li>
+            <li><strong>Discos:</strong>
+              <ul>
+                ${info.disk.map(d => `
+                  <li>${d.fs} — ${(d.size/1024/1024/1024).toFixed(1)} GB 
+                      (Livre: ${(d.available/1024/1024/1024).toFixed(1)} GB)
+                  </li>`).join('')}
+              </ul>
+            </li>
+          </ul>
+        `;
+      } catch (e) {
+        sec.innerHTML = `<h2>Erro ao carregar informações</h2>`;
+        console.error(e);
+      }
+    });
+  </script>
+</body>
+</html>
